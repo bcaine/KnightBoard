@@ -81,3 +81,23 @@ class Mover(object):
         # path algorithm myself, please let me know and I'll
         # resubmit with one ASAP. Shouldn't be too hard.
         return nx.shortest_path(self.graph, start, end, weight='weight')
+
+    def find_longest_path(self, start, end):
+        """Given a start and end, find the longest simple (non-repeating)
+           path between the start and end nodes.
+           INPUT: 
+               start: (i, j) starting location
+               end: (i, j) ending location
+           RETURN: list of moves
+        
+        Here we make the edge weights negative, then use a
+        shortest path solver to find the longest solution.
+        """
+        G = nx.MultiGraph()
+
+        # Make all the weights negative
+        for u, v, data in self.graph.edges_iter(data=True):
+            G.add_edge(u, v, weight=data['weight'] * -1)
+
+        return nx.shortest_path(G, start, end, weight='weight')
+            

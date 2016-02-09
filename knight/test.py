@@ -67,6 +67,15 @@ def level4(file_path):
     mover.move(path, display=True)
     
 def level5(file_path):
-    pass
+    start = (1, 1)
+    end = (26, 25)
+
+    board = Board(file_path, 32)
+    board.set_knight_location(start)
+
+    mover = Mover(board)
+    path = mover.find_longest_path(start, end)
+    print path
+    mover.move(path, display=True)
 
     
