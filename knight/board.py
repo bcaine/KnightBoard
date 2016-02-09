@@ -15,6 +15,7 @@ class Board(object):
         self.start = None
         self.end = None
         self.current = None
+        self.previous_value = '.'
 
         # Read in the board
         self._init_board()
@@ -22,7 +23,12 @@ class Board(object):
 
 
     def set_knight_location(self, location):
-        self.move_knight(self.current, location, check_valid=False)
+        if self.current:
+            self.move_knight(self.current, location, check_valid=False)
+        else:
+            self.current = location
+            (x, y) = location
+            self.board[x][y] = "K"
 
     def move_knight(self, start, goal, check_valid=True):
         """Move your knight from its current location to a new location"""
@@ -34,10 +40,13 @@ class Board(object):
         # If it is valid, move the knight
         (old_x, old_y) = start
         (new_x, new_y) = goal
-        
-        self.board[old_x][old_y] = '.'
-        self.board[new_x][new_y] = 'K'
 
+        # Goofy hack to let us show all past knight locations
+        prev_val = self.board[old_x][old_y]
+        
+        self.board[old_x][old_y] = self.previous_value
+        self.board[new_x][new_y] = 'K'
+        self.previous_value = prev_val
         self.current = goal
 
         # Move was valid and performed
@@ -59,8 +68,11 @@ class Board(object):
         self.board = board
         
         # Find start and end locations if there are any
-        self.start = self._find("S")
-        self.end = self._find("E")
+        start = self._find("S")
+        end = self._find("E")
+
+        self.start = start[0] if start else None
+        self.end = end[0] if end else None
 
         if self.start:
             self.current = self.start
@@ -78,17 +90,29 @@ class Board(object):
                 data = self.board[i][j]
 
                 # If the node is not a [R]ock or a [B]arrier
+                print data
                 if data not in ["R", "B"]:
-                    node_weight = self._get_node_weight(data)
-                    self.graph.add_node(pos, value=data, weight=node_weight)
+                    self.graph.add_node(pos, value=data)
                     
                 for move in self._generate_valid_moves(pos):
                     if self._is_valid_path(pos, move):
-                        self.graph.add_edge(pos, move)
+                        weight = self._get_node_weight(move)
+                        self.graph.add_edge(pos, move, weight=weight)
+
+        # Get the two [T]eleport nodes and swap them.
+        teleport = self._find('T')
+        if len(teleport) == 2:
+            t1, t2 = teleport
+            # Create a mapping to eachother to implement teleport
+            mapping = {t1: t2, t2: t1}
+            # Apply said mapping
+            self.graph = nx.relabel_nodes(self.graph, mapping)
+
 
     def _get_node_weight(self, data):
         """Return node weight if [W]ater or [L]ava, otherwise default to 1"""
         return {"W": 2, "L": 5}.get(data, 1)
+
 
     def _is_valid_path(self, start, end):
         """Checks if a path has no obstructions"""
@@ -125,18 +149,19 @@ class Board(object):
                 return False
         # Otherwise it's a safe path
         return True
-            
+
+
     def _is_obstructed_location(self, location):
         """Returns whether or not a location is obstructed"""
         x, y = location
         return self.board[x][y] == "B"
         
         
-
     def _get_edge_weight(self, data):
         """Given data from the node, we calculate the weight of the edge"""
         pass
 
+    
     def _generate_valid_moves(self, position):
         """Given a position, return all valid moves"""
         x, y = position
@@ -167,11 +192,12 @@ class Board(object):
     
     def _find(self, value):
         """Find the first matching value on the board"""
+        found = []
         for i, row in enumerate(self.board):
             for j, val in enumerate(row):
                 if val == value:
-                    return (i, j)
-        return None
+                    found.append((i, j))
+        return found
         
 
     def __str__(self):

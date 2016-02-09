@@ -80,4 +80,4 @@ class Mover(object):
         # Note: If you would prefer me implement a shortest
         # path algorithm myself, please let me know and I'll
         # resubmit with one ASAP. Shouldn't be too hard.
-        return nx.shortest_path(self.graph, start, end)
+        return nx.shortest_path(self.graph, start, end, weight='weight')
