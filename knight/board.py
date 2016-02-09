@@ -76,12 +76,64 @@ class Board(object):
                 pos = (i, j)
                 # Get value of board at this location
                 data = self.board[i][j]
-                
-                self.graph.add_node(pos, value=data)
-                for move in self._generate_valid_moves(pos):
-                    self.graph.add_edge(pos, move)
 
-    def _get_weight(self, data):
+                # If the node is not a [R]ock or a [B]arrier
+                if data not in ["R", "B"]:
+                    node_weight = self._get_node_weight(data)
+                    self.graph.add_node(pos, value=data, weight=node_weight)
+                    
+                for move in self._generate_valid_moves(pos):
+                    if self._is_valid_path(pos, move):
+                        self.graph.add_edge(pos, move)
+
+    def _get_node_weight(self, data):
+        """Return node weight if [W]ater or [L]ava, otherwise default to 1"""
+        return {"W": 2, "L": 5}.get(data, 1)
+
+    def _is_valid_path(self, start, end):
+        """Checks if a path has no obstructions"""
+        x, y = start
+        end_x, end_y = end
+        
+        x_dir = end_x - x
+        y_dir = end_y - y
+
+        # We know we only move a total of 3 spaces, so we can figure
+        # out exactly what moves are required to get from start to finish
+
+        # If we move two spaces in the x direction, check that
+        if abs(x_dir) > abs(y_dir):
+            direction = -1 if x_dir < 0 else 1
+            # Check first position
+            x += direction
+            if self._is_obstructed_location((x, y)):
+                return False
+            # Check second position
+            x += direction
+            if self._is_obstructed_location((x, y)):
+                return False
+
+        # Otherwise check two moves in the y direction
+        else:
+            direction = -1 if y_dir < 0 else 1
+            # Check first position
+            y += direction
+            if self._is_obstructed_location((x, y)):
+                return False
+            y += direction
+            if self._is_obstructed_location((x, y)):
+                return False
+        # Otherwise it's a safe path
+        return True
+            
+    def _is_obstructed_location(self, location):
+        """Returns whether or not a location is obstructed"""
+        x, y = location
+        return self.board[x][y] == "B"
+        
+        
+
+    def _get_edge_weight(self, data):
         """Given data from the node, we calculate the weight of the edge"""
         pass
 
