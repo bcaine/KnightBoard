@@ -5,24 +5,16 @@ import networkx as nx
 
 class Board(object):
 
-    def __init__(self, file_path, level):
+    def __init__(self, file_path, dimension):
         self.file_path = file_path
-        self.level = level
         self.board = None
         self.graph = nx.MultiGraph()
+        self.dims = dimension
 
         # Current start, end, and current
         self.start = None
         self.end = None
         self.current = None
-
-        if level in [1, 2, 3]:
-            self.dims = 8
-        elif level in [4, 5]:
-            self.dims = 32
-        else:
-            print "Please provide a level between 1 and 5"
-            exit(1)
 
         # Read in the board
         self._init_board()
@@ -90,6 +82,9 @@ class Board(object):
                 for move in self._generate_valid_moves(pos):
                     self.graph.add_edge(pos, move)
 
+    def _get_weight(self, data):
+        """Given data from the node, we calculate the weight of the edge"""
+        pass
 
     def _generate_valid_moves(self, position):
         """Given a position, return all valid moves"""

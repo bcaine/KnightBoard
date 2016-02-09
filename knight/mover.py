@@ -32,9 +32,12 @@ class Mover(object):
         if type(moves) is not list:
             moves = [moves]
 
-        # Do first move outside the loop.
+        # Do the first move independent of the valid checking
+        # Because the first location is the start location
         valid = self.board.set_knight_location(moves[0])
-        
+
+        # For every other move, check that it is still valid
+        # and display the board if desired
         for move in moves[1:]:
             valid = self.board.move_knight(self.board.current, move)
             if not valid:
@@ -42,24 +45,25 @@ class Mover(object):
             if display:
                 print self.board
         return True
+
     
     def find_path(self, start, end):
         """Given a start and end, find a valid sequence of moves
-           that the knight can take.
+           that the knight can take. This path may not be optimal
            INPUT:
                start: (i, j) starting location
                end: (i, j) ending location
            RETURN: list of moves
         """
+        # Basic DFS with early stopping when match found
         stack = [(start, [start])]
         while stack:
             (vertex, path) = stack.pop()
-            for next in set(self.graph.neighbors(vertex)) - set(path):
-                if next == end:
-                    return path + [next]
+            for next_node in set(self.graph.neighbors(vertex)) - set(path):
+                if next_node == end:
+                    return path + [next_node]
                 else:
-                    stack.append((next, path + [next]))
-        
+                    stack.append((next_node, path + [next_node]))
         return None
         
 
@@ -70,6 +74,10 @@ class Mover(object):
                start: (i, j) starting location
                end: (i, j) ending location
            RETURN: list of moves
-        """        
+        """
+        # Use NetworkX shortest path function to find the
+        # shortest path in our graph
+        # Note: If you would prefer me implement a shortest
+        # path algorithm myself, please let me know and I'll
+        # resubmit with one ASAP. Shouldn't be too hard.
         return nx.shortest_path(self.graph, start, end)
-    
