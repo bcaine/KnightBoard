@@ -26,7 +26,6 @@ class Board(object):
 
     def move_knight(self, start, goal, check_valid=True):
         """Move your knight from its current location to a new location"""
-
         # Edges only exist between valid moves
         if check_valid and not self.graph.has_edge(start, goal):
             print "Move from: {} to: {} is invalid.".format(start, goal)
@@ -107,6 +106,8 @@ class Board(object):
                 # Distance away has to be 3
                 if abs(x-i) + abs(y-j) != 3:
                     continue
+
+                # Add additional constraints that prevent edges
 
                 moves.append((i, j))
         return moves

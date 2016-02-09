@@ -17,13 +17,14 @@ def test_level(level, file_path):
     }[level](file_path)
 
 def level1(file_path):
-
+    """Pass in a list of moves, display them, and check if they are valid"""
     board = Board(file_path, 8)
     moves = [(1, 3), (2, 1), (4, 2), (8, 8)]
     mover = Mover(board)
     mover.move(moves, display=True)
 
 def level2(file_path):
+    """Find a path between the start and end positions"""
     start = (1, 1)
     end = (6, 6)
 
@@ -37,6 +38,7 @@ def level2(file_path):
     mover.move(path, display=True)
 
 def level3(file_path):
+    """Find the shortest path between the start and end positions"""
     start = (1, 1)
     end = (6, 6)
 
@@ -49,10 +51,13 @@ def level3(file_path):
     print path
     mover.move(path, display=True)
 
-def level4(board):
+def level4(file_path):
+    """Find the shortest path between the start and end of the 32x32
+       weighted board, with additional constraints
+    """
     pass
 
-def level5(board):
+def level5(file_path):
     pass
 
     
