@@ -86,16 +86,17 @@ class Board(object):
         for i in range(0, self.dims):
             for j in range(0, self.dims):
                 pos = (i, j)
-                # Get value of board at this location
-                data = self.board[i][j]
 
-                # If the node is not a [R]ock or a [B]arrier
-                print data
-                if data not in ["R", "B"]:
-                    self.graph.add_node(pos, value=data)
-                    
+                if not self._is_valid_node(pos):
+                    continue
+
+                # Create a node at this location
+                self.graph.add_node(pos, value=self.board[i][j])
+                
                 for move in self._generate_valid_moves(pos):
-                    if self._is_valid_path(pos, move):
+                    valid_path = self._is_valid_path(pos, move)
+                    valid_node = self._is_valid_node(move)
+                    if valid_path and valid_node:
                         weight = self._get_node_weight(move)
                         self.graph.add_edge(pos, move, weight=weight)
 
@@ -113,6 +114,10 @@ class Board(object):
         """Return node weight if [W]ater or [L]ava, otherwise default to 1"""
         return {"W": 2, "L": 5}.get(data, 1)
 
+    def _is_valid_node(self, pos):
+        x, y = pos
+        data = self.board[x][y]
+        return data not in ["R", "B"]
 
     def _is_valid_path(self, start, end):
         """Checks if a path has no obstructions"""
