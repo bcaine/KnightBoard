@@ -47,12 +47,28 @@ def level1(board):
     mover.move(moves, display=True)
 
 def level2(board):
+    start = (1, 1)
+    end = (6, 6)
+
+    # Set starting point
+    board.set_knight_location(start)
+    
     mover = Mover(board)
-    print mover.find_path((1, 1), (6, 6))
+    path = mover.find_path(start, end)
+    print path
+    mover.move(path, display=True)
 
 def level3(board):
+    start = (1, 1)
+    end = (6, 6)
+
+    # Set starting point
+    board.set_knight_location(start)
+
     mover = Mover(board)
-    print mover.find_shortest_path((1, 1), (6, 6))
+    path = mover.find_shortest_path((1, 1), (6, 6))
+    print path
+    mover.move(path, display=True)
 
 def level4(board):
     pass

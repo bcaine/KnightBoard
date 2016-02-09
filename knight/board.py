@@ -29,23 +29,25 @@ class Board(object):
         self._init_graph()
 
 
-    def move_knight(self, new_location):
+    def set_knight_location(self, location):
+        self.move_knight(self.current, location, check_valid=False)
+
+    def move_knight(self, start, goal, check_valid=True):
         """Move your knight from its current location to a new location"""
 
         # Edges only exist between valid moves
-        if not self.graph.has_edge(self.current, new_location):
-            print "Move from: {} to: {} is invalid.".format(
-                    self.current, new_location)
+        if check_valid and not self.graph.has_edge(start, goal):
+            print "Move from: {} to: {} is invalid.".format(start, goal)
             return False
         
         # If it is valid, move the knight
-        (old_x, old_y) = self.current
-        (new_x, new_y) = new_location
+        (old_x, old_y) = start
+        (new_x, new_y) = goal
         
         self.board[old_x][old_y] = '.'
         self.board[new_x][new_y] = 'K'
 
-        self.current = new_location
+        self.current = goal
 
         # Move was valid and performed
         return True

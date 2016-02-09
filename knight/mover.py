@@ -31,9 +31,12 @@ class Mover(object):
         # Check whether moves is a list
         if type(moves) is not list:
             moves = [moves]
-            
-        for move in moves:
-            valid = board.move_knight(move)
+
+        # Do first move outside the loop.
+        valid = self.board.set_knight_location(moves[0])
+        
+        for move in moves[1:]:
+            valid = self.board.move_knight(self.board.current, move)
             if not valid:
                 return False
             if display:
@@ -47,9 +50,18 @@ class Mover(object):
                start: (i, j) starting location
                end: (i, j) ending location
            RETURN: list of moves
-        """        
-        pass
-
+        """
+        stack = [(start, [start])]
+        while stack:
+            (vertex, path) = stack.pop()
+            for next in set(self.graph.neighbors(vertex)) - set(path):
+                if next == end:
+                    return path + [next]
+                else:
+                    stack.append((next, path + [next]))
+        
+        return None
+        
 
     def find_shortest_path(self, start, end):
         """Given a start and end, find the shortest valid sequence
@@ -60,7 +72,4 @@ class Mover(object):
            RETURN: list of moves
         """        
         return nx.shortest_path(self.graph, start, end)
-
-
-    def 
     
