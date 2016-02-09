@@ -10,6 +10,7 @@ __date__ = "2/08/16"
 
 import argparse
 from board import Board
+from mover import Mover
 
 def main():
     parser = argparse.ArgumentParser(
@@ -27,21 +28,37 @@ def main():
 
     board = Board(file_path, level)
 
-    # Test each level
-    level1(board)
-    level2(board)
-
+    if level == 1:
+        level1(board)
+    elif level == 2:
+        level2(board)
+    elif level == 3:
+        level3(board)
+    elif level == 4:
+        level4(board)
+    elif level == 5:
+        level5(board)
+    else:
+        print "Please provide a level from 1-5"
 
 def level1(board):
     moves = [(1, 3), (2, 1), (4, 2), (8, 8)]
-    board.perform_moves(moves, display=True)
+    mover = Mover(board)
+    mover.move(moves, display=True)
 
 def level2(board):
-    print board.move((1,1), (6, 6))
+    mover = Mover(board)
+    print mover.find_path((1, 1), (6, 6))
 
 def level3(board):
-    print board.move((1,1), (6, 6), shortest=True)
-    
+    mover = Mover(board)
+    print mover.find_shortest_path((1, 1), (6, 6))
+
+def level4(board):
+    pass
+
+def level5(board):
+    pass
 
 if __name__ == "__main__":
     main()

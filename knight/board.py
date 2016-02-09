@@ -28,44 +28,6 @@ class Board(object):
         self._init_board()
         self._init_graph()
 
-    def move(self, start, end, shortest=True):
-        """Given a start and end, find a valid sequence of moves
-           that the knight can take.
-           INPUT:
-               start: (i, j) starting location
-               end: (i, j) ending location
-           RETURN: list of moves
-        """
-        if shortest:
-            path = nx.shortest_path(self.graph, start, end)
-        else:
-            # TODO: Implement this
-            path = []
-        return path
-
-
-    def perform_moves(self, moves, display=False):
-        """
-        Solution to Level 1
-           Given a list of moves, this function moves the knight if valid.
-           If the move is invalid, it reports that it is invaid and exits
-           the function. 
-           
-           INPUT:
-               moves: Sequential List of locations (i, j) to move to.
-               display: Whether to display each move
-           RETURN: bool stating whether all moves were valid
-        """
-        if display:
-            print self
-            
-        for move in moves:
-            valid = self.move_knight(move)
-            if not valid:
-                return False
-            if display:
-                print self
-        return True
 
     def move_knight(self, new_location):
         """Move your knight from its current location to a new location"""
