@@ -92,13 +92,15 @@ class Board(object):
 
                 # Create a node at this location
                 self.graph.add_node(pos, value=self.board[i][j])
-                
-                for move in self._generate_valid_moves(pos):
-                    valid_path = self._is_valid_path(pos, move)
-                    valid_node = self._is_valid_node(move)
-                    if valid_path and valid_node:
-                        weight = self._get_node_weight(move)
-                        self.graph.add_edge(pos, move, weight=weight)
+
+        # Now go through all nodes and generate moves
+        for node, data in self.graph.nodes(data=True):
+            for move in self._generate_valid_moves(node):
+                valid_path = self._is_valid_path(pos, move)
+                valid_node = self._is_valid_node(move)
+                if valid_path and valid_node:
+                    weight = self._get_node_weight(data)
+                    self.graph.add_edge(node, move, weight=weight)
 
         # Get the two [T]eleport nodes and swap them.
         teleport = self._find('T')
@@ -111,8 +113,9 @@ class Board(object):
 
 
     def _get_node_weight(self, data):
+        node_type = data['value']
         """Return node weight if [W]ater or [L]ava, otherwise default to 1"""
-        return {"W": 2, "L": 5}.get(data, 1)
+        return {"W": 2, "L": 5}.get(node_type, 1)
 
     def _is_valid_node(self, pos):
         x, y = pos
